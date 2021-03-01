@@ -2,6 +2,13 @@
 #include <linux/fs.h>
 #include <linux/device.h>
 
+#define CHRDEV_DEBUG
+#ifdef CHRDEV_DEBUG
+#define debug(fmt, args...) printk(KERN_DEBUG fmt, ##args)
+#else
+#define debug(fmt, args...)
+#endif
+
 #define CHRDEV_NAME "chrdev_tiger"
 #define CHR_MAJOR 0
 
@@ -23,12 +30,12 @@ int hello_init(void)
 {
     int ret;
 
-    printk("hello init\n");
+    debug("[%s]hello init\n", __FUNCTION__);
 
     /* 对于整体来说，这一步相当于初始化-init */
     major = register_chrdev(CHR_MAJOR, CHRDEV_NAME, &chrdev_fops);
 
-    printk("major = %d\n", major);
+    debug("[%s]major = %d\n", __FUNCTION__, major);
 
     if (major == 0) {
         return -1;
@@ -64,3 +71,4 @@ void hello_exit(void)
 module_init(hello_init);
 module_exit(hello_exit);
 MODULE_LICENSE("GPL");
+
